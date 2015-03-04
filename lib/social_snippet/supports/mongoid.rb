@@ -1,9 +1,20 @@
-require "social_snippet/supports/mongoid/version"
+require "mongoid"
+require_relative "mongoid/version"
+require_relative "mongoid/mongoid_document"
 
 module SocialSnippet
+
   module Supports
+
     module Mongoid
-      # Your code goes here...
+
+      def self.activate!
+        MongoidDocument.activate!
+      end
+
     end
+
   end
+
 end
+
