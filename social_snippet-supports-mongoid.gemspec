@@ -23,6 +23,19 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.8"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.required_ruby_version = ">= 1.9.3"
+
+  spec.add_runtime_dependency "mongoid", "~> 4.0.2"
+
+  # development
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "yard"
+  spec.add_development_dependency "guard"
+  spec.add_development_dependency "guard-shell"
+
+  # testing
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "mongoid-tree"
+  spec.add_development_dependency "database_cleaner"
 end
