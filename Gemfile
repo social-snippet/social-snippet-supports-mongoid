@@ -5,7 +5,9 @@ gemspec
 
 group :test do
   if ::Dir.exists? "../social-snippet"
-    gem "social_snippet", :path => "../social-snippet" # TODO
+    gem "social_snippet", :path => "../social-snippet"
+  elsif ENV["TRAVIS"] === "true"
+    gem "social_snippet", :github => "social-snippet/social-snippet" # TODO: remove
   end
 end
 
