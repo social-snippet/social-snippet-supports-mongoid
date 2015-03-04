@@ -1,5 +1,7 @@
 # SocialSnippet::Supports::Mongoid
 
+[![Build Status](https://travis-ci.org/social-snippet/social-snippet-supports-mongoid.svg?branch=master)](https://travis-ci.org/social-snippet/social-snippet-supports-mongoid)
+
 ## Installation
 
 Add this line to your application's Gemfile:
