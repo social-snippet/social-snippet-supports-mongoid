@@ -56,8 +56,7 @@ module SocialSnippet::StorageBackend
     def mkdir_p(path)
       realpath = resolve(path)
       raise ::Errno::EEXIST if file?(realpath)
-      add_path realpath
-      add_path dirpath(realpath)
+      add_dir realpath
     end
 
     def exists?(path)
@@ -90,9 +89,12 @@ module SocialSnippet::StorageBackend
     end
 
     def glob(pattern)
-      realpattern = resolve(pattern)
+      real_pattern = resolve(pattern)
+      pattern_dir = dirpath(::File.dirname real_pattern)
       paths.select do |path|
-        ::File.fnmatch realpattern, path, ::File::FNM_PATHNAME
+        next if directory?(path) && path.end_with?("/")
+        next if pattern_dir === path
+        ::File.fnmatch real_pattern, path, ::File::FNM_PATHNAME
       end
     end
 
@@ -109,7 +111,23 @@ module SocialSnippet::StorageBackend
 
     private
 
+    def add_dir(path)
+      add_path path
+      add_path dirpath(path)
+    end
+
+    def add_parent_dir(path)
+      items = path.split(::File::SEPARATOR)
+      items.pop
+      items.inject(::Array.new) do |tmp, item|
+        tmp.push item
+        add_dir ::File.join(*items)
+        tmp
+      end
+    end
+
     def add_path(path)
+      add_parent_dir path
       unless paths.include?(path)
         paths.add path
         model.push :paths => path
