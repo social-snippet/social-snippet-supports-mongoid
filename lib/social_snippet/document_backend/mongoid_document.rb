@@ -1,4 +1,4 @@
-module SocialSnippet::Supports::Mongoid
+module SocialSnippet::DocumentBackend
 
   class MongoidDocument
 
@@ -14,3 +14,4 @@ module SocialSnippet::Supports::Mongoid
   end
 
 end
+

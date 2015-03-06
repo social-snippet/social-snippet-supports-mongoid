@@ -1,17 +1,13 @@
 require "mongoid"
-require_relative "mongoid/version"
-require_relative "mongoid/mongoid_document"
+require "social_snippet/supports/mongoid/version"
+require "social_snippet/document_backend/mongoid_document"
 
-module SocialSnippet
+module SocialSnippet::Supports
 
-  module Supports
+  module Mongoid
 
-    module Mongoid
-
-      def self.activate!
-        MongoidDocument.activate!
-      end
-
+    def self.activate!
+      ::SocialSnippet::DocumentBackend::MongoidDocument.activate!
     end
 
   end
