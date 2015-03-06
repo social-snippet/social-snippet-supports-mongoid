@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 1.9.3"
 
   spec.add_runtime_dependency "mongoid", "~> 4.0.2"
-  spec.add_runtime_dependency "social_snippet"
 
   # development
   spec.add_development_dependency "bundler"
