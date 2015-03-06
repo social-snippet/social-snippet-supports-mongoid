@@ -7,7 +7,8 @@ require_relative "../config/database"
 
 # prepare document
 require "social_snippet/rspec/test_document"
-require_relative "../lib/social_snippet/supports/mongoid"
+require "social_snippet/rspec/test_storage"
+require "social_snippet/supports/mongoid"
 SocialSnippet::Supports::Mongoid.activate!
 
 # prepare helpers
