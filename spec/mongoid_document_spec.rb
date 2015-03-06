@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe ::SocialSnippet::Supports::Mongoid::MongoidDocument do
+describe ::SocialSnippet::DocumentBackend::MongoidDocument do
 
   include_context :TestDocument
 
