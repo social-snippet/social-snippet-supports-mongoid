@@ -23,6 +23,7 @@ module SocialSnippet::StorageBackend
     end
 
     def write(path, content)
+      raise ::Errno::EISDIR if directory?(path)
       tmp_paths.add normalize(path)
     end
 
@@ -30,6 +31,7 @@ module SocialSnippet::StorageBackend
     end
 
     def mkdir(path)
+      raise Errno::EEXIST if exists?(normalize path)
       tmp_paths.add dirpath(path)
     end
 
@@ -47,6 +49,7 @@ module SocialSnippet::StorageBackend
     end
 
     def rm_r(path)
+      path = normalize(path)
       tmp_paths.reject! do |tmp_path|
         tmp_path.start_with? path
       end
