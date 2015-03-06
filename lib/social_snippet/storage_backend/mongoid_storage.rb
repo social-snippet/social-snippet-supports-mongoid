@@ -17,13 +17,13 @@ module SocialSnippet::StorageBackend
       if absolute?(path)
         @workdir = normalize(path)
       else
-        @workdir = normalize(::File.join workdir, path)
+        @workdir = resolve(path)
       end
     end
 
     def touch(path)
       realpath = resolve(path)
-      paths.add normalize(path)
+      paths.add realpath
     end
 
     def write(path, content)
@@ -48,13 +48,14 @@ module SocialSnippet::StorageBackend
     def mkdir(path)
       realpath = resolve(path)
       raise ::Errno::EEXIST if exists?(realpath)
-      paths.add dirpath(path)
+      mkdir_p path
     end
 
     def mkdir_p(path)
       realpath = resolve(path)
       raise ::Errno::EEXIST if file?(realpath)
-      paths.add dirpath(path)
+      paths.add realpath
+      paths.add dirpath(realpath)
     end
 
     def exists?(path)
@@ -81,6 +82,7 @@ module SocialSnippet::StorageBackend
     end
 
     def file?(path)
+      return false if directory?(path)
       realpath = resolve(path)
       paths.include? realpath
     end
