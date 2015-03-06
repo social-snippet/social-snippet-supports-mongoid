@@ -2,6 +2,8 @@ module SocialSnippet::StorageBackend
 
   class MongoidStorage
 
+    require_relative "mongoid_storage/file"
+
     include ::Mongoid::Document
 
     attr_reader :tmp_paths
