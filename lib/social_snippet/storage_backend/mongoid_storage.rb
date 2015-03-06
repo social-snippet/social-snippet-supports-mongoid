@@ -22,12 +22,13 @@ module SocialSnippet::StorageBackend
     end
 
     def touch(path)
+      realpath = resolve(path)
       paths.add normalize(path)
     end
 
     def write(path, content)
+      realpath = resolve(path)
       raise ::Errno::EISDIR if directory?(path)
-      realpath = normalize(::File.join workdir, path)
       paths.add realpath
       file = File.find_or_create_by(:path => realpath)
       file.update_attributes(
@@ -36,49 +37,58 @@ module SocialSnippet::StorageBackend
     end
 
     def read(path)
+      realpath = resolve(path)
       raise ::Errno::EISDIR if directory?(path)
-      realpath = normalize(::File.join workdir, path)
-      file = File.find_by(:path => realpath)
+      file = File.find_by(
+        :path => realpath,
+      )
       file.content
     end
 
     def mkdir(path)
-      raise ::Errno::EEXIST if exists?(normalize path)
+      realpath = resolve(path)
+      raise ::Errno::EEXIST if exists?(realpath)
       paths.add dirpath(path)
     end
 
     def mkdir_p(path)
-      raise ::Errno::EEXIST if file?(normalize path)
+      realpath = resolve(path)
+      raise ::Errno::EEXIST if file?(realpath)
       paths.add dirpath(path)
     end
 
     def exists?(path)
-      paths.include?(normalize path) ||
-        paths.include?(dirpath path)
+      realpath = resolve(path)
+      paths.include?(realpath) ||
+        paths.include?(dirpath realpath)
     end
 
     def rm(path)
-      paths.delete normalize(path)
+      realpath = resolve(path)
+      paths.delete realpath
     end
 
     def rm_r(path)
-      path = normalize(path)
+      realpath = resolve(path)
       paths.reject! do |tmp_path|
-        tmp_path.start_with? path
+        tmp_path.start_with? realpath
       end
     end
 
     def directory?(path)
-      paths.include? dirpath(path)
+      realpath = resolve(path)
+      paths.include? dirpath(realpath)
     end
 
     def file?(path)
-      paths.include? normalize(path)
+      realpath = resolve(path)
+      paths.include? realpath
     end
 
     def glob(pattern)
+      realpattern = resolve(pattern)
       paths.select do |path|
-        ::File.fnmatch pattern, path, ::File::FNM_PATHNAME
+        ::File.fnmatch realpattern, path, ::File::FNM_PATHNAME
       end
     end
 
@@ -99,12 +109,20 @@ module SocialSnippet::StorageBackend
       ::Pathname.new(path).absolute?
     end
 
+    def resolve(path)
+      if absolute?(path)
+        normalize(path)
+      else
+        normalize(::File.join workdir, path)
+      end
+    end
+
     def dirpath(path)
-      normalize(path) + "/"
+      path + "/"
     end
 
     def normalize(path)
-      ::Pathname.new(::File.join path).cleanpath.to_s
+      ::Pathname.new(path).cleanpath.to_s
     end
 
   end
