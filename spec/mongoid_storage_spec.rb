@@ -39,8 +39,9 @@ describe ::SocialSnippet::StorageBackend::MongoidStorage do
 
       context "glob path/to/*" do
         subject { storage.glob "path/to/*" }
-        it { expect(subject.length).to eq 1 }
+        it { expect(subject.length).to eq 2 }
         it { should include ::File.join(storage.pwd, "path", "to", "file") }
+        it { should include ::File.join(storage.pwd, "path", "to", "dir") }
       end
 
     end # find storage
