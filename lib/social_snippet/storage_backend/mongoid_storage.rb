@@ -7,10 +7,12 @@ module SocialSnippet::StorageBackend
 
     attr_reader :paths
     attr_reader :workdir
+    attr_reader :model
 
     def initialize
       @workdir = "/"
-      @paths = ::SortedSet.new
+      @model = Model.find_or_create_by(:id => "social_snippet_storage")
+      @paths = ::SortedSet.new model.paths
     end
 
     def cd(path)
@@ -23,13 +25,13 @@ module SocialSnippet::StorageBackend
 
     def touch(path)
       realpath = resolve(path)
-      paths.add realpath
+      add_path realpath
     end
 
     def write(path, content)
       realpath = resolve(path)
       raise ::Errno::EISDIR if directory?(path)
-      paths.add realpath
+      add_path realpath
       file = File.find_or_create_by(:path => realpath)
       file.update_attributes(
         :content => content,
@@ -54,8 +56,8 @@ module SocialSnippet::StorageBackend
     def mkdir_p(path)
       realpath = resolve(path)
       raise ::Errno::EEXIST if file?(realpath)
-      paths.add realpath
-      paths.add dirpath(realpath)
+      add_path realpath
+      add_path dirpath(realpath)
     end
 
     def exists?(path)
@@ -66,13 +68,13 @@ module SocialSnippet::StorageBackend
 
     def rm(path)
       realpath = resolve(path)
-      paths.delete realpath
+      delete_path realpath
     end
 
     def rm_r(path)
       realpath = resolve(path)
-      paths.reject! do |tmp_path|
-        tmp_path.start_with? realpath
+      paths.each do |tmp_path|
+        delete_path tmp_path if tmp_path.start_with?(realpath)
       end
     end
 
@@ -106,6 +108,18 @@ module SocialSnippet::StorageBackend
     end
 
     private
+
+    def add_path(path)
+      unless paths.include?(path)
+        paths.add path
+        model.push :paths => path
+      end
+    end
+
+    def delete_path(path)
+      paths.delete path
+      model.pull :paths => path
+    end
 
     def absolute?(path)
       ::Pathname.new(path).absolute?
