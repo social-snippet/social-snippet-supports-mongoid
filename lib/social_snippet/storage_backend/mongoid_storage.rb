@@ -43,9 +43,13 @@ module SocialSnippet::StorageBackend
     def read(path)
       realpath = resolve(path)
       raise ::Errno::EISDIR if directory?(path)
-      file = File.find_by(
-        :path => realpath,
-      )
+      begin
+        file = File.find_by(
+          :path => realpath,
+        )
+      rescue ::Mongoid::Errors::DocumentNotFound
+        raise ::Errno::ENOENT
+      end
       file.content
     end
 
