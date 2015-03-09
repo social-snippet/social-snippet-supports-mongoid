@@ -16,6 +16,7 @@ module SocialSnippet::StorageBackend
     end
 
     def cd(path)
+      raise ::Errno::ENOENT unless exists?(path)
       if absolute?(path)
         @workdir = normalize(path)
       else
@@ -24,6 +25,7 @@ module SocialSnippet::StorageBackend
     end
 
     def touch(path)
+      raise ::Errno::ENOENT unless exists?(::File.dirname path)
       realpath = resolve(path)
       add_path realpath
     end
@@ -66,11 +68,13 @@ module SocialSnippet::StorageBackend
     end
 
     def rm(path)
+      raise ::Errno::ENOENT unless exists?(path)
       realpath = resolve(path)
       delete_path realpath
     end
 
     def rm_r(path)
+      raise ::Errno::ENOENT unless exists?(path)
       realpath = resolve(path)
       paths.each do |tmp_path|
         delete_path tmp_path if tmp_path.start_with?(realpath)
