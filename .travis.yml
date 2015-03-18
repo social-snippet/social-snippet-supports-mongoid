@@ -17,6 +17,17 @@ install:
 script:
   - bundle exec rake spec
 
+  # test shell access
+  - bundle exec ./test/bin/sspm_mongo install example-repo#1.0.0
+  - echo "// @snip <example-repo:func.cpp>" | bundle exec ./test/bin/ssnip_mongo
+  - echo "// @snip <example-repo:func.cpp>" | bundle exec ssnip || echo ok
+
+  - bundle exec ./test/bin/sspm_mongo update
+  - echo "// @snip <example-repo:func.cpp>" | bundle exec ./test/bin/ssnip_mongo
+  - echo "// @snip <example-repo:func.cpp>" | bundle exec ssnip || echo ok
+
+  - bundle exec ./test/bin/sspm_mongo update
+
 deploy:
   provider: rubygems
   api_key:
