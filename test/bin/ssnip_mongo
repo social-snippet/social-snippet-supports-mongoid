@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require "social_snippet"
+require_relative "setup"
+
+module SocialSnippet::CommandLine
+  cli = SSnip::MainCommand.new ARGV.clone
+  cli.init
+  cli.run
+end
+
