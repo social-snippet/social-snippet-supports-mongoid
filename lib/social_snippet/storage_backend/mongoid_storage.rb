@@ -120,11 +120,13 @@ module SocialSnippet::StorageBackend
     private
 
     def add_dir(path)
+      return if exists?(path)
       add_path path
       add_path dirpath(path)
     end
 
     def add_parent_dir(path)
+      return if exists?(path)
       items = path.split(::File::SEPARATOR)
       items.pop
       items.inject(::Array.new) do |tmp, item|
